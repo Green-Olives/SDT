@@ -32,7 +32,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: TODO
+        image: 5bondarenko/sdt-course-work-backend:latest
         ports:
         - containerPort: 8080
         env:
