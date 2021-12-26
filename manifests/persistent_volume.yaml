@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: sdt-volume
+  labels:
+    app: sdt
+spec:
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/opt/sdt"
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+          - key: sdt
+            operator: In
+            values:
+              - volume

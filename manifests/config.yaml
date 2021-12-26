@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sdt-configmap
+data:
+  database-host: sdt-database
+  database-name: questionnaire
