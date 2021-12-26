@@ -1,0 +1,79 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sdt-database
+  labels:
+    app: sdt
+    service: database
+spec:
+  selector:
+    app: sdt
+    service: database
+  type: ClusterIP
+  ports:
+  - port: 5432
+    targetPort: 5432
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sdt-volume-claim
+  labels:
+    app: sdt
+    service: database
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sdt-database
+  labels:
+    app: sdt
+    service: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sdt
+      service: database
+  template:
+    metadata:
+      labels:
+        app: sdt
+        service: database
+    spec:
+      containers:
+      - name: database
+        image: postgres
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: sdt-secret
+              key: postgres-user
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: sdt-secret
+              key: postgres-password
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              name: sdt-configmap
+              key: database-name
+        ports:
+        - containerPort: 5432
+          name: postgres
+        volumeMounts:
+        - name: sdt-storage
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: sdt-storage
+        persistentVolumeClaim:
+          claimName: sdt-volume-claim
