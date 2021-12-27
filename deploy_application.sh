@@ -15,10 +15,10 @@ function addLabel() {
 }
 
 function getLastNode() {
-    return "$(kubectl get nodes | tr '\n' '|' | sed -r 's/.*\|([^ ]*) .*/\1/g')"
+    volumeMachine="$(kubectl get nodes | tr '\n' '|' | sed -r 's/.*\|([^ ]*) .*/\1/g')"
 }
 
-volumeMachine=getLastNode
+getLastNode
 
 if [[ -n $1 ]]
 then volumeMachine="$1"
